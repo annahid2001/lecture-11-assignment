@@ -1,0 +1,43 @@
+---
+title: "lecture 11 Assignment"
+output:
+  html_document: default
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(tseries)
+SNPdata <- get.hist.quote('^GSPC',quote="Close")
+SNPret <- log(lag(SNPdata))- log(SNPdata)
+SNPvol <- sd(SNPret * sqrt (250) * 100)
+getVol <- function(d, logrets) {
+	var = 0
+	lam = 0
+	varlist <- c()
+
+	for (r in logrets) {
+		lam = lam*(1 - 1/d) + 1
+	  var = (1 - 1/lam)*var + (1/lam)*r^2
+		varlist <- c(varlist, var)
+	}
+
+	sqrt(varlist)
+}
+volest <- getVol(10 , SNPret)
+volest2 <-getVol( 30, SNPret)
+volest3 <-getVol(100 , SNPret)
+plot(volest, type = "l")
+lines(volest2, col="red", type = "l")
+lines(volest3, col= "blue", type = "l")
+```
+
